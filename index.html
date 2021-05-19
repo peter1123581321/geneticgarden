@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-wEmeIV1mKuiNpC+IOBjI7aAzPcEZeedi5yW5f2yOq55WWLwNGmvvx4Um1vskeMj0" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+        <link rel="shortcut icon" type="image/x-icon" href="pics/favicon.ico">
+        <script src="https://unpkg.com/konva@7.2.5/konva.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <meta charset="utf-8" />
+        <title>genetic.garden</title>
+        <style>
+            body {
+                margin: 0;
+                padding: 0;
+                background-color: #fff;
+            }
+
+            #bed {
+                width: 1000px;
+                height: 480px;
+            }
+
+            #plants {
+                width: 1000px;
+                height: 100px; /* ???? */
+            }
+
+            #main {
+                width:1000px;
+                margin-left:auto;
+                margin-right:auto;
+            }
+
+            .plantCountSpan {
+                margin-right:5px;
+            }
+
+            .myBtn {
+                margin-right:2px;
+            }
+
+            #myChartDiv {
+                /* border:1px #f00 solid; */
+                width: 800px;
+                height:400px;
+            }
+
+            #myChart {
+                /* border:1px #f00 solid; */
+                /* width="300" height="200" */
+            }
+
+        </style>
+    </head>
+    <body>
+        <div id="main" class="container">
+            <br />
+            <h1>genetic.garden</h1>
+            <h2>inspired by nature, developed for nature</h2>
+            <hr />
+            <br />
+            
+            <h3>Step 1: Understand the Problem</h3>
+            <br />
+            <img src="pics/understand-the-problem.jpg" align="right" width="500px" style="padding-left:50px; padding-bottom:50px;" />
+            Companion planting in gardening and agriculture is the planting of different crops in proximity for any of a number of different reasons, including pest control, pollination, providing habitat for beneficial insects, maximizing use of space, and to otherwise increase crop productivity (<a href="https://en.wikipedia.org/wiki/Companion_planting">read more about it on Wikipedia</a>).
+            <br /><br />
+            Some crops fit well together, as example onion and carrots or turnips and cucumbers.
+            Others don't fit that well, as example peas and garlic or beans and fennel.
+            See <a href="#step7-companion-planting">Step 7: About Companion Planting</a> for more information.
+            <br /><br />
+            If you will follow the idea of companion planting in your own garding, you have to think about a plan how you will arrange the plants in your beds.
+            The bigger your beds are or the more crops you want to plant, the more difficult this task gets.
+            <br /><br />
+            The simplest method is to use a trial-and-arror approach and to find a solution that's sufficient for your needs.
+            <br />
+            Another quite interesting method is to use an genetic algorithm that is presented on this website!
+            <br /><br />
+            A genetic algorithm creates a set of individuals that represent possible solutions of the problem. Just like nature, the algorithm iteratively applies mutation- and crossover-functions to create descendants. Additionally, a fitness-function ensures that the algorithm only selects the fittest individuals for further iterations. This process is repeated a number of times or just till a satisfying solution is found.
+            More details can be found in <a href="#step8-algorithm">Step 8: Learn how the Algorithm works</a>.
+            <br /><br />
+
+
+            <h3 id="step2-design-your-beds">Step 2: Design your beds</h3>
+            click on single tiles or click and move to design your beds.<br />
+            select as many tiles as you want for your beds.<br />
+            they can be of any form and don't have to be connected.
+            <br /><br />
+            Number of Tiles: 
+            <div><h5 id="countGreens"></h5></div>
+            <br />
+            <div id="bed"></div>
+
+            
+            <br /><br />
+
+            <h3 id="step3-select-the-vegetables">Step 3: Select the vegetables, that you want to plant</h3>
+            <br />
+            Number of Tiles:  <span id="countPlants"></span>
+            <br /><br />
+            <button type="button" id="randomizePlantsButton" class="btn btn-primary" onclick="randomizePlants()">Randomize</button>
+            <button type="button" id="clearAllPlantsButton" class="btn btn-primary" onclick="clearAllPlants()">Clear All</button>
+            <br /><br />
+
+            <div class="row row-cols-5 g-2" id="plantContainer"></div>
+
+            <br /><br />
+
+            <h3>Step 4: Configure your genetic algorithm</h3>
+            <br />
+            <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">Option</th>
+                    <th scope="col">Value</th>
+                    <th scope="col"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row">Size of Population</th>
+                    <td><span id="populationSize">20</span></td>
+                    <td><input type="range" class="form-range" min="1" max="100" value="20" step="1" id="rangePopulationSize" oninput="changePopulationSize(this.value)" onchange="changePopulationSize(this.value)"></td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Number of Iterations</th>
+                    <td><span id="iterations">500</span></td>
+                    <td><input type="range" class="form-range" min="10" max="1000" value="500" step="5" id="rangeIterations" oninput="changeIterations(this.value)" onchange="changeIterations(this.value)"></td>
+                  </tr>
+                </tbody>
+            </table>
+            
+            <br /><br />
+
+            <h3>Step 5: Run it</h3>
+            <br />
+            Just click on 'Start' to run the algorithm.<br />
+            Some buttons are disabled while the algorithm is active. If you want to reconfigure it, just let it finish or click 'Reset'.
+            <br /><br />
+            <button type="button" id="startButton" class="btn btn-primary" onclick="startGenetic()">Start</button>
+            <button type="button" class="btn btn-primary" onclick="reset()">Reset</button>
+            <br /><br />
+            Score: <span id="score">0</span>, Iteration: <span id="iteration">0</span>
+            <br /><br />
+            <div id="bedSolution"></div>
+            <h5 id="infoText"></h5>
+            <br /><br /><br />
+
+            <h3>Step 6: Analyse</h3>
+            <br /><br />
+            <div id="myChartDiv">
+                <canvas id="myChart"></canvas>
+            </div>
+            <br /><br />
+
+
+            <h3 id="step7-companion-planting">Step 7: About Companion Planting (for the Gardening Nerds)</h3>
+            <br />
+
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Beans</h5>
+                    <i class="bi bi-emoji-smile"></i> Dill, Strawberries, Kale, Cabbage,	Kohlrabi,	Lettuce,	Curled Lettuce,	Radishes,	Turnips, Celery, Tomato	<br />
+                    <i class="bi bi-emoji-frown"></i> Peas, Fennel, Garlic, Leek, Onion<br /><br />
+                    <h5>Dill</h5>
+                    <i class="bi bi-emoji-smile"></i> Beans, Peas, Cucumber, Kale,	Cabbage,	Lettuce, Carrots, Curled Lettuce, Turnips, Onion<br /><br />
+                    <h5>Endive</h5>
+                    <i class="bi bi-emoji-smile"></i> Fennel, Kale, Cabbage, Leek<br /><br />
+                    <h5>Peas</h5>
+                    <i class="bi bi-emoji-smile"></i> Dill, Fennel,	Cucumber, Kale,	Cabbage,	Kohlrabi,	Lettuce,	Carrots, Radishes, Spinach,	Zucchini,	Pumpkin	<br />
+                    <i class="bi bi-emoji-frown"></i> Beans, Garlic, Leek, Tomato, Onion<br /><br />
+                    <h5>Strawberries</h5>
+                    <i class="bi bi-emoji-smile"></i>	Beans, Garlic, Lettuce, Leek, Radishes, Onion<br />
+                    <i class="bi bi-emoji-frown"></i> Kale, Cabbage	<br /><br />
+                    <h5>Fennel</h5>
+                    <i class="bi bi-emoji-smile"></i>	Endive, Peas, Cucumber, Lettuce, Curled Lettuce, Sage<br />
+                    <i class="bi bi-emoji-frown"></i>	Beans, Tomato<br /><br />
+                    <h5>Cucumber</h5>
+                    <i class="bi bi-emoji-smile"></i>	Dill, Peas, Fennel, Garlic, Kale, Cabbage, Lettuce, Leek, Turnips, Celery, Onion<br />
+                    <i class="bi bi-emoji-frown"></i>	Radishes, Tomato<br /><br />
+                    <h5>Nasturtium</h5>
+                    <i class="bi bi-emoji-smile"></i>	Radishes, Tomato, Zucchini,	Pumpkin	<br /><br />
+                    <h5>Garlic</h5>
+                    <i class="bi bi-emoji-smile"></i> Strawberries, Cucumber, Carrots, Turnips, Tomato	<br />
+                    <i class="bi bi-emoji-frown"></i>	Beans, Peas, Kale,	Cabbage	<br /><br />
+                    <h5>Kale</h5>
+                    <i class="bi bi-emoji-smile"></i>	Beans,	Dill,	Endive,	Peas,	Cucumber, Lettuce,	Leek, Peppermint, Curled Lettuce,	Radishes,	Turnips, Celery,	Spinach,	Tomato	<br />
+                    <i class="bi bi-emoji-frown"></i>	Strawberries, Garlic, Onion<br /><br />
+                    <h5>Cabbage</h5>
+                    <i class="bi bi-emoji-smile"></i>	Beans,	Dill,	Endive,	Peas,	Cucumber, Lettuce,	Leek, Peppermint,	Curled Lettuce,	Radishes,	Turnips,	Celery,	Spinach,	Tomato	<br />
+                    <i class="bi bi-emoji-frown"></i>	Strawberries, Garlic, Onion<br /><br />
+                    <h5>Kohlrabi</h5>
+                    <i class="bi bi-emoji-smile"></i>	Beans, Peas, Lettuce,	Leek, Radishes,	Turnips,	Celery,	Spinach,	Tomato	<br /><br />
+                    <h5>Lettuce</h5>
+                    <i class="bi bi-emoji-smile"></i>	Beans, Dill, Peas,	Strawberries,	Fennel,	Cucumber,	Kale,	Cabbage,	Kohlrabi, Leek,	Carrots,	Peppermint,	Radishes,	Turnips, Tomato, Onion<br />
+                    <i class="bi bi-emoji-frown"></i>	Parsley, Celery	<br /><br />
+                </div>
+                <div class="col-md-6">
+                    <h5>Leek</h5>
+                    <i class="bi bi-emoji-smile"></i>	Endive, Strawberries, Cucumber, Kale, Cabbage,	Kohlrabi,	Lettuce,	Carrots, Celery,	Tomato, Onion<br />
+                    <i class="bi bi-emoji-frown"></i>	Beans,	Peas, Turnips<br /><br />
+                    <h5>Carrots</h5>
+                    <i class="bi bi-emoji-smile"></i>	Dill,	Peas, Garlic, Lettuce,	Leek, Peppermint,	Curled Lettuce,	Radishes,	Sage, Tomato, Onion<br /><br />
+                    <h5>Parsley</h5>
+                    <i class="bi bi-emoji-smile"></i>	Radishes, Tomato<br />
+                    <i class="bi bi-emoji-frown"></i> Lettuce<br /><br />
+                    <h5>Peppermint</h5>
+                    <i class="bi bi-emoji-smile"></i>	Kale,	Cabbage,	Lettuce, Carrots, Tomato<br /><br />
+                    <h5>Curled Lettuce</h5>
+                    <i class="bi bi-emoji-smile"></i>	Beans,	Dill, Fennel, Kale,	Cabbage, Carrots, Radishes,	Turnips, Tomato	<br /><br />
+                    <h5>Radishes</h5>
+                    <i class="bi bi-emoji-smile"></i>	Beans, Peas,	Strawberries, Nasturtium, Kale,	Cabbage,	Kohlrabi,	Lettuce,	Carrots,	Parsley,	Curled Lettuce, Spinach,	Tomato	<br />
+                    <i class="bi bi-emoji-frown"></i> Cucumber<br /><br />
+                    <h5>Turnips</h5>
+                    <i class="bi bi-emoji-smile"></i>	Beans,	Dill, Cucumber, Garlic, Kale,	Cabbage,	Kohlrabi,	Lettuce, Curled Lettuce, Tomato, Onion<br />
+                    <i class="bi bi-emoji-frown"></i> Leek	<br /><br />
+                    <h5>Sage</h5>
+                    <i class="bi bi-emoji-smile"></i> Fennel, Carrots<br /><br />
+                    <h5>Celery</h5>
+                    <i class="bi bi-emoji-smile"></i>	Beans, Cucumber, Kale,	Cabbage,	Kohlrabi,	Leek, Tomato<br />
+                    <i class="bi bi-emoji-frown"></i> Lettuce<br /><br />
+                    <h5>Spinach</h5>
+                    <i class="bi bi-emoji-smile"></i>	Peas, Kale, Cabbage,	Kohlrabi, Radishes, Tomato<br /><br />
+                    <h5>Tomato</h5>
+                    <i class="bi bi-emoji-smile"></i>	Beans, Nasturtium,	Garlic,	Kale,	Cabbage,	Kohlrabi,	Lettuce,	Leek,	Carrots,	Parsley,	Peppermint,	Curled Lettuce,	Radishes,	Turnips,	Celery,	Spinach	<br />
+                    <i class="bi bi-emoji-frown"></i> Peas, Fennel,	Cucumber<br /><br />
+                    <h5>Zucchini</h5>
+                    <i class="bi bi-emoji-smile"></i> Peas,	Nasturtium,	Onion<br /><br />
+                    <h5>Pumpkin</h5>
+                    <i class="bi bi-emoji-smile"></i>	Peas,	Nasturtium, Onion<br /><br />
+                    <h5>Onion</h5>
+                    <i class="bi bi-emoji-smile"></i>	Dill,	Strawberries, Cucumber, Lettuce,	Leek,	Carrots,	Turnips,	Zucchini,	Pumpkin	<br />
+                    <i class="bi bi-emoji-frown"></i>	Beans, Peas, Kale,	Cabbage
+                </div>
+            </div>            
+            
+            <br /><br />
+
+
+            <h3 id="step8-algorithm">Step 8: Learn how the Algorithm works (for the Computer/Maths Nerds)</h3>
+            <br />
+            <p class="lead">
+            The first step of the algorithm is to create a starting population of individuals, whereby each individual represents a legal solution for the underlying problem.
+            So, the first question we have to ask is, how can we model such an inidividual.
+            </p>
+            The most common way in genetic algoriths is to use a simple string in which each character has a value of a pre-defined set.
+            <br />
+            In the presented application this set looks as follows:
+            <br /><br />
+            <code>-2 = grass (an empty green tile),<br />
+                -1 = soil (a tile on which a plant can grow),<br />
+                &nbsp;0 = beans,<br />
+                &nbsp;1 = dill,<br />
+                &nbsp;2 = endive,<br />
+                &nbsp;&nbsp;...,<br />
+                26 = onion</code>
+            <br /><br />
+            As you noticed, each crop has been numbered and has got a number between 0 and 26.<br />
+            The tiles and the beds that were designed in <a href="#step2-design-your-beds">Step 2: Design your beds</a>, can also be numbered,
+            <br />
+            and we can assign each tile a value of the previously defined set:
+            <br /><br />
+            <code>
+            1. tile = -2 (just grass)<br />
+            2. tile = -2 (also grass)<br />
+            3. tile = -1 (oh, here we defined a soil-tile) <br />
+            4. tile = 2 (on this tile, an endive is growing)<br />
+            ... and so on ...
+            </code>
+            <br /><br />
+            To be mentioned, the orientation doesn't matter. The first tile can be in the upper left or wherever you want, although it is convenient to start in the upper left corner and to continue line by line.
+            <br /><br />
+            In Computer Science, we talk of an array of signed integers that typically just looks as follows:
+            <br /><br />
+            <code>[-2, -2, -2, -2, -1, -1, 0, 0, -1, -1, ..., -2, -2, -2, -2]</code>
+            <br /><br />
+            This array is a possible and valid solution in terms of the genetic algorithm, if the following is true:
+            <br /><br />
+            <ol>
+                <li>it respects the defined beds of <a href="#step2-design-your-beds">Step 2: Design your beds</a></li>
+                <li>a plant can only grow on a tile that has been defined as a soil-tile and not on a grass-tile</li>
+                <li>the sum of each crop corresponds to the numbers<br />of the selected vegetables in <a href="#step3-select-the-vegetables">Step 3: Select the vegetables, that you want to plant</a></li>
+            </ol>
+            As already explained, the algorithm starts with creation of a number of different individuals or possible solutions.
+            <br />
+            They simply can be created randomly by arranging all plants on free soil-tiles.
+            <br /><br />
+            Afterwards, the algorithm repeats the following genetic-functions for a pre-defined number of iterations,<br />
+            and based on the selection-function, it also visualizes the best solution in every iteration:
+            <br /><br />
+            <u>Mutation</u>
+            <br /><br />
+            The mutation-function is very simple. It randomly selects a number of individuals of the population, clones them and just switches two tiles of each individual.
+            <br /><br />
+            before the mutation: <code>[..., -1, -1, 7, -1, ...]</code><br />
+            after the mutation: <code>[..., -7, -1, -1, -1, ...]</code>
+            <br /><br />
+            As it can be seen, the <i>7</i> changed its place. The corresponding plant is a <i>Nasturtium</i> and it has been put to tile that had soil on it.
+            <br />
+            The only thing one have to care about is, that the grass-tiles will not be touched.
+            <br />
+            This is necessary to ensure that the designed beds remain the same.
+            <br /><br />
+            <u>Crossover</u>
+            <br /><br />
+            The crossover-function is a bit more difficult, as it randomly takes two different individuals and creates one descendant out of them.
+            <br /><br />
+            To create a descendant it walks through the arrays of the parents and randomly selects the value from one of the parents,
+            <br />as far as that doesn'tn violate one of the constraints for a legal individual.
+            <br />If there are some plants lefts, they can be arranged randomly on the free soil-tiles.
+            <br /><br />
+            Individual A: <code>[-2, 3, 7, 4, -2]</code><br />
+            Individual B: <code>[-2, 4, 3, 7, -2]</code>
+            <br /><br />
+            At the first index, both individual have the value <i>-2</i>, which indicates a grass-tiles.<br />
+            This has to be applied to the new individual:<br /><br />
+            Descendant: <code>[-2]</code><br /><br />
+            At the second index, we randomly select individual A, which has has a plant with the value <i>3</i> on it.<br />
+            As it doesn't violate any constraint, we can apply it to the descendant:<br /><br />
+            Descendant: <code>[-2, 3]</code><br /><br />
+            At the third index, we randomly select individual B, which has again the value <i>3</i> on it.<br />
+            But if we applied it to the descendant, we would violate a constraint (there's only one plant with value <i>3</i>).<br />
+            Consequently, we can try the value of the other individual A, which has the value <i>7</i> and that's still available.<br /><br />
+            Descendant: <code>[-2, 3, 7]</code><br /><br />
+            At the fourth index, we randomly select individual A and we can apply the value <i>4</i> to the descendant:<br /><br />
+            Descendant: <code>[-2, 3, 7, 4]</code><br /><br />
+            Finally, we add another soil-tile and are finished:<br /><br />
+            Descendant: <code>[-2, 3, 7, 4, -2]</code>
+            <br /><br />
+            <u>Selection</u>
+            <br /><br />
+            After the mutation- and crossover-function have been applied, the populion contains more individuals than before.<br />
+            Therefore, the selection-function selects the best, respectively the fittest individuals of the population for the next iteration.
+            <br /><br />
+            The rating of an individual is done by comparing each tile with its neighbours<br />in consideration of their compatibility (see <a href="step7-companion-planting">Step 7: About Companion Planting</a>).<br />
+            If two plants next to each other fit well together, the value <i>1</i> is used; if they don't fit together, a value <i>-1</i> is used.<br />
+            Addiontially, if to plants are of the same crop, the value <i>-1</i> is used too, to prevent accumulation of the same plants in a neighborhood.
+            The sum indiciates a value of each individuals and can be used to sort the individuals of a population.<br />
+            Consequently, the size of the population can be cut to its initial size.
+
+            <br /><br /><br />
+
+            <h3>Step 10: Modify</h3>
+
+
+
+            <br /><br /><br />
+
+
+            <h3>Misc</h3>
+            <br />
+            I signed the <mark>Karlskrona Manifesto</mark> on <mark>Sustainability Design</mark>.
+            <br />You should too, it's important. <a href="https://www.sustainabilitydesign.org/signatories/">https://www.sustainabilitydesign.org/signatories/</a>.
+
+
+            <br /><br /><br />
+
+            <h3>Credits</h3>
+            <br />
+            All photos can be found on <a href="https://unsplash.com/s/photos/beans?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>.
+            <br /><br />
+            Favicon:
+            Photo by <a href="https://unsplash.com/@rohitranwa?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Rohit Ranwa</a>,
+            Understand the Problem:
+            Photo by <a href="https://unsplash.com/@jupp?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Jonathan Kemper</a>,
+            Beans:
+            Photo by <a href="https://unsplash.com/@matildakb?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Matilda bellman</a>, 
+            Dill:
+            Photo by <a href="https://unsplash.com/@jlgvrl?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Julia Gavrilenko</a>,
+            Endive:
+            Photo by <a href="https://unsplash.com/@5rca?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">petra cigale</a>,
+            Peas:
+            Photo by <a href="https://unsplash.com/@kosertem?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Artem Kostenko</a>,
+            Strawberries:
+            Photo by <a href="https://unsplash.com/@maksimshutov?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Maksim Shutov</a>,
+            Fennel:
+            Photo by <a href="https://unsplash.com/@anuragarora?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Anurag Arora</a>,
+            Cucumber:
+            Photo by <a href="https://unsplash.com/@harshalhirve?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Harshal S. Hirve</a>,
+            Nasturtium:
+            Photo by <a href="https://unsplash.com/@maylee_m?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Maylee</a>,
+            Garlic:
+            Photo by <a href="https://unsplash.com/@voyas?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">team voyas</a>,
+            Kale:
+            Photo by <a href="https://unsplash.com/@heathergill?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Heather Gill</a>,
+            Cabbage:
+            Photo by <a href="https://unsplash.com/@natskov?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Natasha Skov</a>,
+            Kohlrabi:
+            Photo by <a href="https://unsplash.com/@moniqa?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Monika Grabkowska</a>,
+            Lettuce:
+            Photo by <a href="https://unsplash.com/@nate_dumlao?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Nathan Dumlao</a>,
+            Leek:
+            Photo by <a href="https://unsplash.com/@macroman?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Immo Wegmann</a>,
+            Carrots:
+            Photo by <a href="https://unsplash.com/@bohdans?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Bohdan Stocek</a>,
+            Parsley:
+            Photo by <a href="https://unsplash.com/@davidtoddmccarty?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">David Todd McCarty</a>,
+            Peppermint:
+            Photo by <a href="https://unsplash.com/@lamthuy95?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Thúy Lâm</a>,
+            Curled Lettuce:
+            Photo by <a href="https://unsplash.com/@stephanie_moody?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Stephanie Moody</a>,
+            Radishes:
+            Photo by <a href="https://unsplash.com/@philippe_collard?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">philippe collard</a>,
+            Turnips:
+            Photo by <a href="https://unsplash.com/@punk_rock_vegan?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Christina Rumpf</a>,
+            Sage:
+            Photo by <a href="https://unsplash.com/@phillip_larking?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Phillip Larking</a>,
+            Celery:
+            Photo by <a href="https://unsplash.com/@milada_vigerova?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Milada Vigerova</a>,
+            Spinach:
+            Photo by <a href="https://unsplash.com/@nathan_nugent_photography?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Nathan Nugent</a>,
+            Tomato:
+            Photo by <a href="https://unsplash.com/@tomhermans?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Tom Hermans</a>,
+            Zucchini:
+            Photo by <a href="https://unsplash.com/@louishansel?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Louis Hansel</a>,
+            Pumpkin:
+            Photo by <a href="https://unsplash.com/@kerstinwrba?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Kerstin Wrba</a>,
+            Onion:
+            Photo by <a href="https://unsplash.com/@lmablankers?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Lars Blankers</a>
+
+            <br /><br /><br />
+        </div>
+
+        <script>
+            // consts
+            const GREEN = -2;
+            const SOIL = -1;
+            const GREENCOLOR = "#6ecc6e";
+            const SOILCOLOR = "#ddd";
+
+            // globals
+            var gTiles = JSON.parse('[{"rectId":"rect0","status":-2},{"rectId":"rect1","status":-2},{"rectId":"rect2","status":-2},{"rectId":"rect3","status":-2},{"rectId":"rect4","status":-2},{"rectId":"rect5","status":-2},{"rectId":"rect6","status":-2},{"rectId":"rect7","status":-2},{"rectId":"rect8","status":-2},{"rectId":"rect9","status":-2},{"rectId":"rect10","status":-2},{"rectId":"rect11","status":-2},{"rectId":"rect12","status":-2},{"rectId":"rect13","status":-2},{"rectId":"rect14","status":-2},{"rectId":"rect15","status":-2},{"rectId":"rect16","status":-2},{"rectId":"rect17","status":-2},{"rectId":"rect18","status":-2},{"rectId":"rect19","status":-2},{"rectId":"rect20","status":-2},{"rectId":"rect21","status":-2},{"rectId":"rect22","status":-2},{"rectId":"rect23","status":-2},{"rectId":"rect24","status":-2},{"rectId":"rect25","status":-2},{"rectId":"rect26","status":-2},{"rectId":"rect27","status":-2},{"rectId":"rect28","status":-2},{"rectId":"rect29","status":-2},{"rectId":"rect30","status":-2},{"rectId":"rect31","status":-2},{"rectId":"rect32","status":-2},{"rectId":"rect33","status":-2},{"rectId":"rect34","status":-2},{"rectId":"rect35","status":-2},{"rectId":"rect36","status":-2},{"rectId":"rect37","status":-2},{"rectId":"rect38","status":-2},{"rectId":"rect39","status":-2},{"rectId":"rect40","status":-2},{"rectId":"rect41","status":-2},{"rectId":"rect42","status":-2},{"rectId":"rect43","status":-2},{"rectId":"rect44","status":-2},{"rectId":"rect45","status":-2},{"rectId":"rect46","status":-2},{"rectId":"rect47","status":-2},{"rectId":"rect48","status":-2},{"rectId":"rect49","status":-2},{"rectId":"rect50","status":-2},{"rectId":"rect51","status":-2},{"rectId":"rect52","status":-2},{"rectId":"rect53","status":-2},{"rectId":"rect54","status":-2},{"rectId":"rect55","status":-2},{"rectId":"rect56","status":-2},{"rectId":"rect57","status":-2},{"rectId":"rect58","status":-2},{"rectId":"rect59","status":-2},{"rectId":"rect60","status":-2},{"rectId":"rect61","status":-2},{"rectId":"rect62","status":-1},{"rectId":"rect63","status":-1},{"rectId":"rect64","status":-1},{"rectId":"rect65","status":-1},{"rectId":"rect66","status":-1},{"rectId":"rect67","status":-1},{"rectId":"rect68","status":-1},{"rectId":"rect69","status":-1},{"rectId":"rect70","status":-2},{"rectId":"rect71","status":-1},{"rectId":"rect72","status":-1},{"rectId":"rect73","status":-1},{"rectId":"rect74","status":-1},{"rectId":"rect75","status":-1},{"rectId":"rect76","status":-1},{"rectId":"rect77","status":-1},{"rectId":"rect78","status":-1},{"rectId":"rect79","status":-2},{"rectId":"rect80","status":-1},{"rectId":"rect81","status":-1},{"rectId":"rect82","status":-1},{"rectId":"rect83","status":-1},{"rectId":"rect84","status":-1},{"rectId":"rect85","status":-1},{"rectId":"rect86","status":-1},{"rectId":"rect87","status":-1},{"rectId":"rect88","status":-2},{"rectId":"rect89","status":-2},{"rectId":"rect90","status":-2},{"rectId":"rect91","status":-2},{"rectId":"rect92","status":-1},{"rectId":"rect93","status":-1},{"rectId":"rect94","status":-1},{"rectId":"rect95","status":-1},{"rectId":"rect96","status":-1},{"rectId":"rect97","status":-1},{"rectId":"rect98","status":-1},{"rectId":"rect99","status":-1},{"rectId":"rect100","status":-2},{"rectId":"rect101","status":-1},{"rectId":"rect102","status":-1},{"rectId":"rect103","status":-1},{"rectId":"rect104","status":-1},{"rectId":"rect105","status":-1},{"rectId":"rect106","status":-1},{"rectId":"rect107","status":-1},{"rectId":"rect108","status":-1},{"rectId":"rect109","status":-2},{"rectId":"rect110","status":-1},{"rectId":"rect111","status":-1},{"rectId":"rect112","status":-1},{"rectId":"rect113","status":-1},{"rectId":"rect114","status":-1},{"rectId":"rect115","status":-1},{"rectId":"rect116","status":-1},{"rectId":"rect117","status":-1},{"rectId":"rect118","status":-2},{"rectId":"rect119","status":-2},{"rectId":"rect120","status":-2},{"rectId":"rect121","status":-2},{"rectId":"rect122","status":-1},{"rectId":"rect123","status":-1},{"rectId":"rect124","status":-1},{"rectId":"rect125","status":-1},{"rectId":"rect126","status":-1},{"rectId":"rect127","status":-1},{"rectId":"rect128","status":-1},{"rectId":"rect129","status":-1},{"rectId":"rect130","status":-2},{"rectId":"rect131","status":-1},{"rectId":"rect132","status":-1},{"rectId":"rect133","status":-1},{"rectId":"rect134","status":-1},{"rectId":"rect135","status":-1},{"rectId":"rect136","status":-1},{"rectId":"rect137","status":-1},{"rectId":"rect138","status":-1},{"rectId":"rect139","status":-2},{"rectId":"rect140","status":-1},{"rectId":"rect141","status":-1},{"rectId":"rect142","status":-1},{"rectId":"rect143","status":-1},{"rectId":"rect144","status":-1},{"rectId":"rect145","status":-1},{"rectId":"rect146","status":-1},{"rectId":"rect147","status":-1},{"rectId":"rect148","status":-2},{"rectId":"rect149","status":-2},{"rectId":"rect150","status":-2},{"rectId":"rect151","status":-2},{"rectId":"rect152","status":-1},{"rectId":"rect153","status":-1},{"rectId":"rect154","status":-1},{"rectId":"rect155","status":-1},{"rectId":"rect156","status":-1},{"rectId":"rect157","status":-1},{"rectId":"rect158","status":-1},{"rectId":"rect159","status":-1},{"rectId":"rect160","status":-2},{"rectId":"rect161","status":-1},{"rectId":"rect162","status":-1},{"rectId":"rect163","status":-1},{"rectId":"rect164","status":-1},{"rectId":"rect165","status":-1},{"rectId":"rect166","status":-1},{"rectId":"rect167","status":-1},{"rectId":"rect168","status":-1},{"rectId":"rect169","status":-2},{"rectId":"rect170","status":-1},{"rectId":"rect171","status":-1},{"rectId":"rect172","status":-1},{"rectId":"rect173","status":-1},{"rectId":"rect174","status":-1},{"rectId":"rect175","status":-1},{"rectId":"rect176","status":-1},{"rectId":"rect177","status":-1},{"rectId":"rect178","status":-2},{"rectId":"rect179","status":-2},{"rectId":"rect180","status":-2},{"rectId":"rect181","status":-2},{"rectId":"rect182","status":-1},{"rectId":"rect183","status":-1},{"rectId":"rect184","status":-1},{"rectId":"rect185","status":-1},{"rectId":"rect186","status":-1},{"rectId":"rect187","status":-1},{"rectId":"rect188","status":-1},{"rectId":"rect189","status":-1},{"rectId":"rect190","status":-2},{"rectId":"rect191","status":-1},{"rectId":"rect192","status":-1},{"rectId":"rect193","status":-1},{"rectId":"rect194","status":-1},{"rectId":"rect195","status":-1},{"rectId":"rect196","status":-1},{"rectId":"rect197","status":-1},{"rectId":"rect198","status":-1},{"rectId":"rect199","status":-2},{"rectId":"rect200","status":-1},{"rectId":"rect201","status":-1},{"rectId":"rect202","status":-1},{"rectId":"rect203","status":-1},{"rectId":"rect204","status":-1},{"rectId":"rect205","status":-1},{"rectId":"rect206","status":-1},{"rectId":"rect207","status":-1},{"rectId":"rect208","status":-2},{"rectId":"rect209","status":-2},{"rectId":"rect210","status":-2},{"rectId":"rect211","status":-2},{"rectId":"rect212","status":-2},{"rectId":"rect213","status":-2},{"rectId":"rect214","status":-2},{"rectId":"rect215","status":-2},{"rectId":"rect216","status":-2},{"rectId":"rect217","status":-2},{"rectId":"rect218","status":-2},{"rectId":"rect219","status":-2},{"rectId":"rect220","status":-2},{"rectId":"rect221","status":-2},{"rectId":"rect222","status":-2},{"rectId":"rect223","status":-2},{"rectId":"rect224","status":-2},{"rectId":"rect225","status":-2},{"rectId":"rect226","status":-2},{"rectId":"rect227","status":-2},{"rectId":"rect228","status":-2},{"rectId":"rect229","status":-2},{"rectId":"rect230","status":-2},{"rectId":"rect231","status":-2},{"rectId":"rect232","status":-2},{"rectId":"rect233","status":-2},{"rectId":"rect234","status":-2},{"rectId":"rect235","status":-2},{"rectId":"rect236","status":-2},{"rectId":"rect237","status":-2},{"rectId":"rect238","status":-2},{"rectId":"rect239","status":-2},{"rectId":"rect240","status":-2},{"rectId":"rect241","status":-2},{"rectId":"rect242","status":-1},{"rectId":"rect243","status":-1},{"rectId":"rect244","status":-1},{"rectId":"rect245","status":-1},{"rectId":"rect246","status":-1},{"rectId":"rect247","status":-1},{"rectId":"rect248","status":-1},{"rectId":"rect249","status":-1},{"rectId":"rect250","status":-2},{"rectId":"rect251","status":-1},{"rectId":"rect252","status":-1},{"rectId":"rect253","status":-1},{"rectId":"rect254","status":-1},{"rectId":"rect255","status":-1},{"rectId":"rect256","status":-1},{"rectId":"rect257","status":-1},{"rectId":"rect258","status":-1},{"rectId":"rect259","status":-2},{"rectId":"rect260","status":-1},{"rectId":"rect261","status":-1},{"rectId":"rect262","status":-1},{"rectId":"rect263","status":-1},{"rectId":"rect264","status":-1},{"rectId":"rect265","status":-1},{"rectId":"rect266","status":-1},{"rectId":"rect267","status":-1},{"rectId":"rect268","status":-2},{"rectId":"rect269","status":-2},{"rectId":"rect270","status":-2},{"rectId":"rect271","status":-2},{"rectId":"rect272","status":-1},{"rectId":"rect273","status":-1},{"rectId":"rect274","status":-1},{"rectId":"rect275","status":-1},{"rectId":"rect276","status":-1},{"rectId":"rect277","status":-1},{"rectId":"rect278","status":-1},{"rectId":"rect279","status":-1},{"rectId":"rect280","status":-2},{"rectId":"rect281","status":-1},{"rectId":"rect282","status":-1},{"rectId":"rect283","status":-1},{"rectId":"rect284","status":-1},{"rectId":"rect285","status":-1},{"rectId":"rect286","status":-1},{"rectId":"rect287","status":-1},{"rectId":"rect288","status":-1},{"rectId":"rect289","status":-2},{"rectId":"rect290","status":-1},{"rectId":"rect291","status":-1},{"rectId":"rect292","status":-1},{"rectId":"rect293","status":-1},{"rectId":"rect294","status":-1},{"rectId":"rect295","status":-1},{"rectId":"rect296","status":-1},{"rectId":"rect297","status":-1},{"rectId":"rect298","status":-2},{"rectId":"rect299","status":-2},{"rectId":"rect300","status":-2},{"rectId":"rect301","status":-2},{"rectId":"rect302","status":-1},{"rectId":"rect303","status":-1},{"rectId":"rect304","status":-1},{"rectId":"rect305","status":-1},{"rectId":"rect306","status":-1},{"rectId":"rect307","status":-1},{"rectId":"rect308","status":-1},{"rectId":"rect309","status":-1},{"rectId":"rect310","status":-2},{"rectId":"rect311","status":-1},{"rectId":"rect312","status":-1},{"rectId":"rect313","status":-1},{"rectId":"rect314","status":-1},{"rectId":"rect315","status":-1},{"rectId":"rect316","status":-1},{"rectId":"rect317","status":-1},{"rectId":"rect318","status":-1},{"rectId":"rect319","status":-2},{"rectId":"rect320","status":-1},{"rectId":"rect321","status":-1},{"rectId":"rect322","status":-1},{"rectId":"rect323","status":-1},{"rectId":"rect324","status":-1},{"rectId":"rect325","status":-1},{"rectId":"rect326","status":-1},{"rectId":"rect327","status":-1},{"rectId":"rect328","status":-2},{"rectId":"rect329","status":-2},{"rectId":"rect330","status":-2},{"rectId":"rect331","status":-2},{"rectId":"rect332","status":-1},{"rectId":"rect333","status":-1},{"rectId":"rect334","status":-1},{"rectId":"rect335","status":-1},{"rectId":"rect336","status":-1},{"rectId":"rect337","status":-1},{"rectId":"rect338","status":-1},{"rectId":"rect339","status":-1},{"rectId":"rect340","status":-2},{"rectId":"rect341","status":-1},{"rectId":"rect342","status":-1},{"rectId":"rect343","status":-1},{"rectId":"rect344","status":-1},{"rectId":"rect345","status":-1},{"rectId":"rect346","status":-1},{"rectId":"rect347","status":-1},{"rectId":"rect348","status":-1},{"rectId":"rect349","status":-2},{"rectId":"rect350","status":-1},{"rectId":"rect351","status":-1},{"rectId":"rect352","status":-1},{"rectId":"rect353","status":-1},{"rectId":"rect354","status":-1},{"rectId":"rect355","status":-1},{"rectId":"rect356","status":-1},{"rectId":"rect357","status":-1},{"rectId":"rect358","status":-2},{"rectId":"rect359","status":-2},{"rectId":"rect360","status":-2},{"rectId":"rect361","status":-2},{"rectId":"rect362","status":-1},{"rectId":"rect363","status":-1},{"rectId":"rect364","status":-1},{"rectId":"rect365","status":-1},{"rectId":"rect366","status":-1},{"rectId":"rect367","status":-1},{"rectId":"rect368","status":-1},{"rectId":"rect369","status":-1},{"rectId":"rect370","status":-2},{"rectId":"rect371","status":-1},{"rectId":"rect372","status":-1},{"rectId":"rect373","status":-1},{"rectId":"rect374","status":-1},{"rectId":"rect375","status":-1},{"rectId":"rect376","status":-1},{"rectId":"rect377","status":-1},{"rectId":"rect378","status":-1},{"rectId":"rect379","status":-2},{"rectId":"rect380","status":-1},{"rectId":"rect381","status":-1},{"rectId":"rect382","status":-1},{"rectId":"rect383","status":-1},{"rectId":"rect384","status":-1},{"rectId":"rect385","status":-1},{"rectId":"rect386","status":-1},{"rectId":"rect387","status":-1},{"rectId":"rect388","status":-2},{"rectId":"rect389","status":-2},{"rectId":"rect390","status":-2},{"rectId":"rect391","status":-2},{"rectId":"rect392","status":-2},{"rectId":"rect393","status":-2},{"rectId":"rect394","status":-2},{"rectId":"rect395","status":-2},{"rectId":"rect396","status":-2},{"rectId":"rect397","status":-2},{"rectId":"rect398","status":-2},{"rectId":"rect399","status":-2},{"rectId":"rect400","status":-2},{"rectId":"rect401","status":-2},{"rectId":"rect402","status":-2},{"rectId":"rect403","status":-2},{"rectId":"rect404","status":-2},{"rectId":"rect405","status":-2},{"rectId":"rect406","status":-2},{"rectId":"rect407","status":-2},{"rectId":"rect408","status":-2},{"rectId":"rect409","status":-2},{"rectId":"rect410","status":-2},{"rectId":"rect411","status":-2},{"rectId":"rect412","status":-2},{"rectId":"rect413","status":-2},{"rectId":"rect414","status":-2},{"rectId":"rect415","status":-2},{"rectId":"rect416","status":-2},{"rectId":"rect417","status":-2},{"rectId":"rect418","status":-2},{"rectId":"rect419","status":-2},{"rectId":"rect420","status":-2},{"rectId":"rect421","status":-2},{"rectId":"rect422","status":-2},{"rectId":"rect423","status":-2},{"rectId":"rect424","status":-2},{"rectId":"rect425","status":-2},{"rectId":"rect426","status":-2},{"rectId":"rect427","status":-2},{"rectId":"rect428","status":-2},{"rectId":"rect429","status":-2},{"rectId":"rect430","status":-2},{"rectId":"rect431","status":-2},{"rectId":"rect432","status":-2},{"rectId":"rect433","status":-2},{"rectId":"rect434","status":-2},{"rectId":"rect435","status":-2},{"rectId":"rect436","status":-2},{"rectId":"rect437","status":-2},{"rectId":"rect438","status":-2},{"rectId":"rect439","status":-2},{"rectId":"rect440","status":-2},{"rectId":"rect441","status":-2},{"rectId":"rect442","status":-2},{"rectId":"rect443","status":-2},{"rectId":"rect444","status":-2},{"rectId":"rect445","status":-2},{"rectId":"rect446","status":-2},{"rectId":"rect447","status":-2},{"rectId":"rect448","status":-2},{"rectId":"rect449","status":-2}]');
+
+            var gRunning = false;
+            var gReset = false;
+            var gRectWidth = 30;
+            var gMouseDown = false;
+            var gCols=30;
+            var gRows=15;
+            var gTilesCount = gCols*gRows;
+            var gPopulationSize = 20;
+            var gPopulation = [];
+            var gIterations = 500;
+            var gIterationIndex = 0;
+            var gCountGreens = countBrowns();
+            var gPlants = [];
+            gPlants[0]={count:0, name:'Beans',img:"beans.jpg",color:"#3d5940"};
+            gPlants[1]={count:0, name:'Dill',img:"dill.jpg",color:"#5f8340"};
+            gPlants[2]={count:0, name:'Endive',img:"endive.jpg",color:"#2d6519"};
+            gPlants[3]={count:0, name:'Peas',img:"peas.jpg",color:"#749d2d"};
+            gPlants[4]={count:0, name:'Strawberries',img:"strawberries.jpg",color:"#b53e26"};
+            gPlants[5]={count:0, name:'Fennel',img:"fennel.jpg",color:"#827f6d"};
+            gPlants[6]={count:0, name:'Cucumber',img:"cucumber.jpg",color:"#5b873e"};
+            gPlants[7]={count:0, name:'Nasturtium',img:"nasturtium.jpg",color:"#49533f"};
+            gPlants[8]={count:0, name:'Garlic',img:"garlic.jpg",color:"#c09b96"};
+            gPlants[9]={count:0, name:'Kale',img:"kale.jpg",color:"#4c6648"};
+            gPlants[10]={count:0, name:'Cabbage',img:"cabbage.jpg",color:"#659974"};
+            gPlants[11]={count:0, name:'Kohlrabi',img:"kohlrabi.jpg",color:"#aab0a6"};
+            gPlants[12]={count:0, name:'Lettuce',img:"lettuce.jpg",color:"#728d58"};
+            gPlants[13]={count:0, name:'Leek',img:"leek.jpg",color:"#5c7131"};
+            gPlants[14]={count:0, name:'Carrots',img:"carrots.jpg",color:"#8e6332"};
+            gPlants[15]={count:0, name:'Parsley',img:"parsley.jpg",color:"#909059"};
+            gPlants[16]={count:0, name:'Peppermint',img:"peppermint.jpg",color:"#59763b"};
+            gPlants[17]={count:0, name:'Curled Lettuce',img:"curledlettuce.jpg",color:"#87a623"};
+            gPlants[18]={count:0, name:'Radishes',img:"radishes.jpg",color:"#835956"};
+            gPlants[19]={count:0, name:'Turnips',img:"turnips.jpg",color:"#3c3e2b"};
+            gPlants[20]={count:0, name:'Sage',img:"sage.jpg",color:"#27322a"};
+            gPlants[21]={count:0, name:'Celery',img:"celery.jpg",color:"#959e82"};
+            gPlants[22]={count:0, name:'Spinach',img:"spinach.jpg",color:"#439825"};
+            gPlants[23]={count:0, name:'Tomato',img:"tomato.jpg",color:"#791806"};
+            gPlants[24]={count:0, name:'Zucchini',img:"zucchini.jpg",color:"#a0a793"};
+            gPlants[25]={count:0, name:'Pumpkin',img:"pumpkin.jpg",color:"#9b7449"};
+            gPlants[26]={count:0, name:'Onion',img:"onion.jpg",color:"#9c7040"};
+            
+
+            var gCountPlants = 0;
+            var gPlantMatrix = [];
+
+            gPlantMatrix[0] = [-1,1,0,-1,1,-1,0,0,-1,1,1,1,1,-1,0,0,0,1,1,1,0,1,0,1,0,0,-1];
+            gPlantMatrix[1] = [1,-1,0,1,0,0,1,0,0,1,1,0,1,0,1,0,0,1,0,1,0,0,0,0,0,0,1];
+            gPlantMatrix[2] = [0,0,-1,0,0,1,0,0,0,1,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0];
+            gPlantMatrix[3] = [-1,1,0,-1,0,1,1,0,-1,1,1,1,1,-1,1,0,0,0,1,0,0,0,1,-1,1,1,-1];
+            gPlantMatrix[4] = [1,0,0,0,-1,0,0,0,1,-1,-1,0,1,1,0,0,0,0,1,0,0,0,0,0,0,0,1];
+            gPlantMatrix[5] = [-1,0,1,1,0,-1,1,0,0,0,0,0,1,0,0,0,0,1,0,0,1,0,0,-1,0,0,0];
+            gPlantMatrix[6] = [0,1,0,1,0,1,-1,0,1,1,1,0,1,1,0,0,0,0,-1,1,0,1,0,-1,0,0,1];
+            gPlantMatrix[7] = [0,0,0,0,0,0,0,-1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,1,1,0];
+            gPlantMatrix[8] = [-1,0,0,-1,1,0,1,0,-1,-1,-1,0,0,0,1,0,0,0,0,1,0,0,0,1,0,0,0];
+            gPlantMatrix[9] = [1,1,1,1,-1,0,1,0,-1,-1,0,0,1,1,0,0,1,1,1,1,0,1,1,1,0,0,-1];
+            gPlantMatrix[10] = [1,1,1,1,-1,0,1,0,-1,0,-1,0,1,1,0,0,1,1,1,1,0,1,1,1,0,0,-1];
+            gPlantMatrix[11] = [1,0,0,1,0,0,0,0,0,0,0,-1,1,1,0,0,0,0,1,1,0,1,1,1,0,0,0];
+            gPlantMatrix[12] = [1,1,0,1,1,1,1,0,0,1,1,1,-1,1,1,-1,1,0,1,1,0,-1,0,1,0,0,1];
+            gPlantMatrix[13] = [-1,0,1,-1,1,0,1,0,0,1,1,1,1,-1,1,0,0,0,0,-1,0,1,0,1,0,0,1];
+            gPlantMatrix[14] = [0,1,0,1,0,0,0,0,1,0,0,0,1,1,-1,0,1,1,1,0,1,0,0,1,0,0,1];
+            gPlantMatrix[15] = [0,0,0,0,0,0,0,0,0,0,0,0,-1,0,0,-1,0,0,1,0,0,0,0,1,0,0,0];
+            gPlantMatrix[16] = [0,0,0,0,0,0,0,0,0,1,1,0,1,0,1,0,-1,0,0,0,0,0,0,1,0,0,0];
+            gPlantMatrix[17] = [1,1,0,0,0,1,0,0,0,1,1,0,0,0,1,0,0,-1,1,1,0,0,0,1,0,0,0];
+            gPlantMatrix[18] = [1,0,0,1,1,0,-1,1,0,1,1,1,1,0,1,1,0,1,-1,0,0,0,1,1,0,0,0];
+            gPlantMatrix[19] = [1,1,0,0,0,0,1,0,1,1,1,1,1,-1,0,0,0,1,0,-1,0,0,0,1,0,0,1];
+            gPlantMatrix[20] = [0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,-1,0,0,0,0,0,0];
+            gPlantMatrix[21] = [1,0,0,0,0,0,1,0,0,1,1,1,-1,1,0,0,0,0,0,0,0,-1,0,1,0,0,0];
+            gPlantMatrix[22] = [0,0,0,1,0,0,0,0,0,1,1,1,0,0,0,0,0,0,1,0,0,0,-1,1,0,0,0];
+            gPlantMatrix[23] = [1,0,0,-1,0,-1,-1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,-1,0,0,0];
+            gPlantMatrix[24] = [0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1,0,1];
+            gPlantMatrix[25] = [0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1,1];
+            gPlantMatrix[26] = [-1,1,0,-1,1,0,1,0,0,-1,-1,0,1,1,1,0,0,0,0,1,0,0,0,0,1,1,-1];
+
+            var gChartLabels = [];
+            var gChartData = [];
+
+            // chart
+            var ctx = document.getElementById('myChart');
+            var myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: gChartLabels,
+                    datasets: [{
+                        label: '# Score of Fittest Individual',
+                        data: gChartData,
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    animation: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            function addDataToChart(label, data) {
+                gChartLabels.push(label);
+                gChartData.push(data);
+                myChart.update();
+            }
+
+            function resetChart() {
+                gChartLabels.splice(0,gChartLabels.length);
+                gChartData.splice(0,gChartData.length);
+                myChart.update();
+            }
+
+
+            // init
+            document.getElementById("countGreens").innerText = gCountGreens; // eigentlich countBrowns
+            document.getElementById("countPlants").innerText = gCountPlants;
+
+            // stages, layers
+
+            var bedLayer = new Konva.Layer();
+            var bedSolutionLayer = new Konva.Layer();
+
+            drawBedLayer();
+            drawBedSolutionLayer();
+
+
+            // functions
+
+            function clearAllPlants() {
+                gCountPlants = 0;
+                for (var i=0;i<gPlants.length;i++) {
+                    gPlants[i].count=0;
+                    document.getElementById("plant"+i).innerText = "0";
+                }
+                document.getElementById("countPlants").innerText = gCountPlants;
+            }
+
+            function randomizePlants() {
+                clearAllPlants();
+                while (gCountPlants<gCountGreens) {
+                    var i = Math.floor(Math.random()*gPlants.length);
+                    gPlants[i].count++;
+                    document.getElementById("plant"+i).innerText = gPlants[i].count;
+                    gCountPlants++;
+                }
+                document.getElementById("countPlants").innerText = gCountPlants;
+            }
+
+            function countBrowns() {
+                var count=0;
+                for (var i=0;i<gTiles.length;i++) {
+                    if (gTiles[i].status==SOIL) {
+                        count++;
+                    }
+                }
+                return count;
+            }
+
+            function changePopulationSize(populationSize) {
+                document.getElementById("populationSize").innerText=populationSize;
+                gPopulationSize = populationSize;
+            }
+
+            function changeIterations(iterations) {
+                document.getElementById("iterations").innerText=iterations;
+                gIterations = iterations;
+            }
+
+            function sleep(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+
+            async function startGenetic() {
+
+                // pause
+                if (gRunning==true) {
+                    gRunning=false;
+                    return;
+                }
+
+                if (gIterationIndex == 0) { // init (start, not continue)
+                    if (gCountPlants>gCountGreens) {
+                        alert("can't start the algorithm. you have selected too much plants.")
+                        return;
+                    }
+                    disableButtons();
+                    gPopulation = generatePopulation();
+                    gPopulation = gPopulation.sort(sortPopulation);
+                    drawSolution(gPopulation[0]);
+                    resetChart();
+                    // console.log(gIterationIndex);
+                }
+
+                document.getElementById("startButton").innerText="Pause";
+                gRunning = true;
+
+                for (; gIterationIndex <gIterations && gRunning && !gReset; gIterationIndex++) {      
+                    document.getElementById("iteration").innerText=(gIterationIndex+1)+"/"+gIterations;  
+
+                    // crossover
+                    if (gPopulationSize>1) { // nur crossovern wenn mehr als zwei eltern existieren
+                        for (var k=0;k<10;k++) {
+                            var aIndex = Math.floor(Math.random()*gPopulationSize);
+                            var bIndex = aIndex;
+
+                            while (bIndex==aIndex) { // unterschiedliche Eltern auswählen
+                                bIndex = Math.floor(Math.random()*gPopulationSize);
+                            }
+
+                            var individualA = gPopulation[aIndex];
+                            var individualB = gPopulation[bIndex];
+
+                            var crossoverGen = crossover(individualA.gen,individualB.gen);
+                            var crossoverScore = evaluateGen(crossoverGen);
+                            gPopulation.push({gen: crossoverGen, score: crossoverScore});
+                        }
+                    }
+
+                    // mutate X gens
+                    for (var k=0;k<10;k++) {
+                        var mutatedGen = mutateGen(copy(gPopulation[Math.floor(Math.random()*gPopulationSize)].gen));
+                        var mutatedScore = evaluateGen(mutatedGen);
+                        gPopulation.push({gen: mutatedGen, score: mutatedScore});
+                    }
+
+                    // sort & draw
+                    gPopulation=gPopulation.sort(sortPopulation);
+                    gPopulation.splice(gPopulationSize);
+                    document.getElementById("score").innerText=gPopulation[0].score;
+                    drawSolution(gPopulation[0].gen);
+                    addDataToChart(gIterationIndex, gPopulation[0].score);
+                    await sleep(50);                    
+                }
+
+                if (gIterationIndex<gIterations-1 && !gReset) {
+                    document.getElementById("startButton").innerText="Resume";
+                } else { // done or reset
+                    gIterationIndex = 0;
+                    gRunning = false;
+                    document.getElementById("startButton").innerText="Start";
+                    enableButtons();
+                    if (gReset) {
+                        gReset = false;
+                        document.getElementById("score").innerText=0;
+                        document.getElementById("iteration").innerText=0;  
+                        drawBedSolutionLayer();
+                    }
+                }
+            }
+
+            function reset() {
+                if (gRunning) {
+                    gReset = true;
+                } else {
+                    gIterationIndex = 0;
+                    gRunning = false;
+                    document.getElementById("startButton").innerText="Start";
+                    enableButtons();
+                    document.getElementById("score").innerText=0;
+                    document.getElementById("iteration").innerText=0;  
+                    drawBedSolutionLayer();
+                    resetChart();
+                }
+            }
+
+            function disableButtons() {
+                document.getElementById("clearAllPlantsButton").disabled = true;
+                document.getElementById("randomizePlantsButton").disabled = true;
+                document.getElementById("rangePopulationSize").disabled = true;
+                document.getElementById("rangeIterations").disabled = true;
+                for (var i=0;i<gPlants.length;i++) {
+                    document.getElementById("btnPlantPlus"+i).disabled = true;
+                    document.getElementById("btnPlantMinus"+i).disabled = true;
+                }
+            }
+
+            function enableButtons() {
+                document.getElementById("clearAllPlantsButton").disabled = false;
+                document.getElementById("randomizePlantsButton").disabled = false;
+                document.getElementById("rangePopulationSize").disabled = false;
+                document.getElementById("rangeIterations").disabled = false;
+                for (var i=0;i<gPlants.length;i++) {
+                    document.getElementById("btnPlantPlus"+i).disabled = false;
+                    document.getElementById("btnPlantMinus"+i).disabled = false;
+                }
+            }
+
+            function crossover(individualA,individualB) {
+
+                var plants = []
+                for (var i=0;i<gPlants.length;i++) {
+                    plants.push(gPlants[i].count);
+                }
+
+                var child = [];
+
+                // für jeden index wird eines der beiden elter ausgewählt
+                // falls erde, übernehmen
+                // falls pflanze und noch genügend da, übernehmen
+                // ansonsten mit anderem elter weitermachen
+                // fals erde, übernehmen
+                // falls pflanze und noch genügend da, übernehmen
+                // anschließend restliche pflanzen per zufall auf freie erde verteilen
+                for (var i=0;i<gTilesCount;i++) {
+                    if (individualA[i]==-2) {
+                        child.push(-2);
+                    } else {
+
+                        var parentIndex = Math.floor(Math.random()*2); // bevorzugtes elter festlegen
+
+                        var primaryPlant = parentIndex==0 ? individualA[i] : individualB[i];
+                        var secondaryPlant = parentIndex==0 ? individualB[i] : individualA[i];
+
+                        if (primaryPlant==-1) { // bevorzugtes Elter ist erde --> übernehmen
+                            child[i]=-1;
+                        } else if (plants[primaryPlant]>0) { // bevorzugtes Elter pflanze noch verfügbar --> übernehmen
+                            child[i]=primaryPlant;
+                            plants[primaryPlant]--;
+                        } else if (secondaryPlant==-1) { // nachrangiges Elter ist erde --> übernehmen
+                            child[i]=-1;
+                        } else if (plants[secondaryPlant]>0) { // nachrangiges Elter pflanze noch verfügbar --> übernehmen
+                            child[i]=secondaryPlant;
+                            plants[secondaryPlant]--;
+                        } else { // wenn alles nichts hilft, dann erde
+                            child.push(-1);
+                        }
+                    }
+                }
+
+                // restliche pflanzen per zufall verteilen
+                for (var i=0;i<plants.length;i++) {
+                    while(plants[i]>0) {
+                        var k = getRandomFreeTile(child);
+                        child[k]=i;
+                        plants[i]--;
+                    }
+                }
+
+                return child;
+            }
+
+            function printPopulation(population) {
+                for (var i=0;i<population.length;i++) {
+
+                    var gen = population[i].gen;
+
+                    var plants=[];
+                    for (var k=0;k<gen.length;k++) {
+                        if (gen[k]>=-1) {
+                            plants.push(gen[k]);
+                        }
+                    }
+
+                    // console.log(JSON.stringify(plants)+" --> "+population[i].score);
+                }
+            }
+
+            function mutateGen(gen) {
+
+                var plants=[];
+                for (var i=0;i<gen.length;i++) {
+                    if (gen[i]>=-1) {
+                        plants.push(i);
+                    }
+                }
+
+                plants=shuffle(plants);
+
+                if (plants.length>2) {
+                    var temp = gen[plants[0]];
+                    gen[plants[0]]=gen[plants[1]];
+                    gen[plants[1]]=temp;
+                }
+
+                return gen;
+            }
+
+            function shuffle(a) {
+                var j, x, i;
+                for (i = a.length - 1; i > 0; i--) {
+                    j = Math.floor(Math.random() * (i + 1));
+                    x = a[i];
+                    a[i] = a[j];
+                    a[j] = x;
+                }
+                return a;
+            }
+
+            function sortPopulation(individualA, individualB) {
+                if (individualA.score == individualB.score) {
+                    return 0;
+                }
+                else {
+                    return (individualA.score > individualB.score) ? -1 : 1;
+                }
+            }
+
+            function generatePopulation() {
+                var population = [];
+                for (var i=0;i<gPopulationSize;i++) {
+                    var gen = generateRandomGen();
+                    var score = evaluateGen(gen);
+                    population.push({gen: gen, score: score});
+                }
+                return population;
+            }
+
+            function drawSolution(gen) {
+                for (var i=0;i<gen.length;i++) {
+                    var rect = bedSolutionLayer.findOne('#rectSolution'+i);
+
+                    if (gen[i]==GREEN) {
+                        rect.fill(GREENCOLOR)
+                    } else if (gen[i]==SOIL) {
+                        rect.fill(SOILCOLOR)
+                    } else {
+                        rect.fill(gPlants[gen[i]].color);
+                    }
+                    rect.draw();
+                }
+            }
+
+            function evaluateGen(gen) {
+                var score = 0;
+                for (var i=0;i<gen.length;i++) {
+                    if (gen[i]<0) {
+                        continue;
+                    }
+                    var neighbours = getNeighboursByRectId(i);
+                    for (var k=0;k<neighbours.length;k++) {                        
+                        if (gen[neighbours[k]]<0) {
+                            continue;
+                        }
+                        score+=gPlantMatrix[gen[i]][gen[neighbours[k]]];
+                    }
+                }
+                return score/2;
+            }
+
+            function generateRandomGen() {
+                var gen=[];
+                
+                // copy beds
+                for (i=0;i<gTiles.length;i++) {
+                    if (gTiles[i].status==GREEN) {
+                        gen.push(GREEN);
+                    } else if (gTiles[i].status==SOIL) {
+                        gen.push(SOIL);
+                    }
+                }
+
+                // clone plants
+                var p = copy(gPlants);
+                var c = gCountPlants;
+
+                // randomize plants on bed
+                while(c>0) {
+                    // search for a plant color
+                    for (var i=0;i<p.length;i++) {
+                        if (p[i].count>0) {
+                            // gen[getRandomFreeTile(gen)]=p[i].color;
+                            // console.log(i);
+                            gen[getRandomFreeTile(gen)]=i;
+                            p[i].count--;
+                            c--;
+                        }
+                    }
+                }
+                return gen;
+            }
+
+            function copy(aObject) {
+                if (!aObject) {
+                    return aObject;
+                }
+
+                let v;
+                let bObject = Array.isArray(aObject) ? [] : {};
+                for (const k in aObject) {
+                    v = aObject[k];
+                    bObject[k] = (typeof v === "object") ? copy(v) : v;
+                }
+
+                return bObject;
+            }
+
+            function getRandomFreeTile(gen) {
+                var tiles=[];
+                for (var i=0;i<gen.length;i++) {
+                    if (gen[i]==-1) {
+                        tiles.push(i);
+                    }
+                }
+                return tiles[Math.floor(Math.random() * tiles.length)];
+            }
+
+            function getPlantColor(p) {
+
+            }
+
+            function drawBedLayer() {
+                var bedStage = new Konva.Stage({
+                    container: 'bed',
+                    width: 1000,
+                    height: 500
+                });
+
+                for (var i=0;i<gPlants.length;i++) {
+                    addPlantCard(i,gPlants[i].name,gPlants[i].img,gPlants[i].count);
+                }
+
+                for (var i=0;i<gTilesCount;i++) {
+
+                    var rect = new Konva.Rect({
+                        id: 'rect'+i,
+                        x: 0+(i%gCols)*(gRectWidth+1),
+                        y: 0+Math.floor(i/gCols)*(gRectWidth+1),
+                        width: gRectWidth,
+                        height: gRectWidth,
+                        fill: (gTiles[i].status==GREEN?GREENCOLOR:SOILCOLOR)
+                    });
+
+                    bedLayer.add(rect);
+                }
+
+                bedStage.add(bedLayer);
+            }
+
+            function drawBedSolutionLayer() {
+                var bedSolutionStage = new Konva.Stage({
+                    container: 'bedSolution',
+                    width: 1000,
+                    height: 500
+                });
+
+                for (var i=0;i<gTilesCount;i++) {
+
+                    var rect = new Konva.Rect({
+                        id: 'rectSolution'+i,
+                        x: 0+(i%gCols)*(gRectWidth+1),
+                        y: 0+Math.floor(i/gCols)*(gRectWidth+1),
+                        width: gRectWidth,
+                        height: gRectWidth,
+                        fill: GREENCOLOR
+                    });
+
+                    bedSolutionLayer.add(rect);
+                }
+
+                bedSolutionStage.add(bedSolutionLayer);                
+            }
+
+            function addPlantCard(plantIndex, plantTitle, plantImage, plantCount) {
+
+                var pC = document.getElementById('plantContainer');
+
+                var d1 = document.createElement('div');
+                d1.className="col";
+
+                var d2 = document.createElement('div');
+                d2.className="card h-100";
+                d1.appendChild(d2);
+
+                if (plantImage!==null) {
+                    var img = document.createElement('img');
+                    img.src="pics/"+plantImage;
+                    img.className="card-img-top";
+                    img.alt=plantTitle;
+                    d2.appendChild(img);
+                }
+
+                var d3 = document.createElement('div');
+                d3.className="card-body";
+                d2.appendChild(d3);
+
+                var h = document.createElement('h5');
+                h.className="card-title";
+                h.innerText=plantTitle;
+                d3.appendChild(h);
+
+                var p = document.createElement('p');
+                p.className="card-text";
+                d3.appendChild(p);
+
+                var d4 = document.createElement('span');
+                d4.className="plantCountSpan";
+                d4.id='plant'+plantIndex;
+                d4.innerText=plantCount;
+                p.appendChild(d4);
+
+                var b1 = document.createElement('button');
+                b1.onclick=function() { addPlant(plantIndex); };
+                b1.id="btnPlantPlus"+plantIndex;
+                b1.type="button";
+                b1.className="btn btn-primary btn-sm myBtn";
+                b1.innerText='+';
+                p.append(b1);
+
+                var b2 = document.createElement('button');
+                b2.onclick=function() { removePlant(plantIndex); };
+                b2.id="btnPlantMinus"+plantIndex;
+                b2.type="button";
+                b2.className="btn btn-primary btn-sm myBtn";
+                b2.innerText='-';
+                p.append(b2);
+
+                pC.appendChild(d1);
+            }
+
+            function addPlant(plantIndex) {
+                if (gCountPlants<gCountGreens) {
+                    gCountPlants++
+                    gPlants[plantIndex].count++;
+                    document.getElementById("countPlants").textContent=gCountPlants;
+                    document.getElementById("plant"+plantIndex).textContent=gPlants[plantIndex].count;
+                }
+            }
+
+            function removePlant(plantIndex) {
+                if (gPlants[plantIndex].count>0) {
+                    gCountPlants--
+                    gPlants[plantIndex].count--;
+                    document.getElementById("countPlants").textContent=gCountPlants;
+                    document.getElementById("plant"+plantIndex).textContent=gPlants[plantIndex].count;
+                }
+            }
+
+            function changeTile(box) {
+                var newColor=GREENCOLOR;
+                gCountGreens--;
+
+                if (box.attrs.fill==GREENCOLOR) {
+                    newColor=SOILCOLOR;
+                    gCountGreens+=2;
+                }
+
+                document.getElementById("countGreens").textContent=gCountGreens;
+
+                box.fill(newColor);
+                box.draw();
+                var tile = getTileToRect(box.attrs.id);
+                if (tile !== null) {
+                    tile.status=(newColor==SOILCOLOR?SOIL:GREEN);
+                }
+            }
+
+            function getTileToRect(rectId) {
+                for (var i=0;i<gTiles.length;i++) {
+                    if (gTiles[i].rectId==rectId) {
+                        return gTiles[i];
+                    }
+                }
+                return null;
+            }
+
+            /*
+            function highlightNeighbours(rect) {
+                var id = rect.attrs.id;
+                id = id.slice(4);
+                console.log(JSON.stringify(id) + ' --> '+getNeighboursByRectId(Number(id)));
+            }
+            */
+
+            function getNeighboursByRectId(id) {
+                var neighbours = [];
+                // left
+                if (id%gCols>0) {
+                    neighbours.push(id-1);
+                }
+                // right
+                if (id%gCols<gCols-1) {
+                    neighbours.push(id+1);
+                }
+                // up
+                if (Math.floor(id/gCols)>0) {
+                    neighbours.push(id-gCols);
+                }
+                // down
+                if (Math.floor(id/gCols)<gRows-1) {
+                    neighbours.push(id+gCols);
+                }
+                return neighbours;
+            }
+
+            // events
+
+            bedLayer.on('mousedown', function (evt) {
+                gMouseDown = true;
+                if (evt.target.className=='Rect') {
+                    changeTile(evt.target);
+                }
+            });
+
+            bedLayer.on('mouseup', function (evt) {
+                gMouseDown = false;
+            });
+
+            bedLayer.on('mouseover', function (evt) {
+                if (evt.target.className=='Rect') {
+                    if (gMouseDown) {
+                        changeTile(evt.target);
+                    }
+                }
+            });
+
+            bedSolutionLayer.on('mouseover', function (evt) {
+                if (evt.target.className=='Rect') {
+                    var tileId = evt.target.attrs.id.slice(12);
+                    if (gPopulation.length>0) {
+                        var plantId = gPopulation[0].gen[tileId];
+                        if (plantId>=0) {
+                            var text = gPlants[plantId].name;
+                            document.getElementById("infoText").innerText = text;
+                        }
+                    }
+                }
+            });
+
+            bedSolutionLayer.on('mouseout', function (evt) {
+                document.getElementById("infoText").innerText = "";
+            });
+        </script>
+    </body>
+</html>
