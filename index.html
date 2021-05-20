@@ -6,8 +6,18 @@
         <link rel="shortcut icon" type="image/x-icon" href="pics/favicon.ico">
         <script src="https://unpkg.com/konva@7.2.5/konva.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        <meta charset="utf-8" />
         <title>genetic.garden</title>
+        <meta charset="utf-8" />
+        <meta property="description" content="inspired by nature, developed for nature">
+        <meta property="og:title" content="Genetic Garden">
+        <meta property="og:description" content="inspired by nature, developed for nature">
+        <meta property="og:image" content="//genetic.garden/pics/social-media.jpg">
+        <meta property="og:url" content="https://genetic.garden">
+        <meta name="twitter:card" content="summary_large_image">
+        <meta property="og:site_name" content="Genetic Garden">
+        <meta name="twitter:image:alt" content="picture of a person who gardens">
+        <meta property="og:type" content="article" />
+        <meta property="og:locale" content="en_GB" />
         <style>
             body {
                 margin: 0;
@@ -67,11 +77,14 @@
             <h1>genetic.garden</h1>
             <h2>inspired by nature, developed for nature</h2>
             <hr />
-            <br />
+
+            <div align="right">
+                <a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-show-count="false">Tweet</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+            </div>
             
             <h3>Step 1: Understand the Problem</h3>
             <br />
-            <img src="pics/understand-the-problem.jpg" align="right" width="500px" style="padding-left:50px; padding-bottom:50px;" />
+            <img src="pics/understand-the-problem.jpg" align="right" width="500px" style="padding-left:50px; padding-bottom:50px;" alt="picture of a person who gardens" />
             Companion planting in gardening and agriculture is the planting of different crops in proximity for any of a number of different reasons, including pest control, pollination, providing habitat for beneficial insects, maximizing use of space, and to otherwise increase crop productivity (<a href="https://en.wikipedia.org/wiki/Companion_planting">read more about it on Wikipedia</a>).
             <br /><br />
             Some crops fit well together, as example onion and carrots or turnips and cucumbers.
@@ -152,6 +165,7 @@
             Score: <span id="score">0</span>, Iteration: <span id="iteration">0</span>
             <br /><br />
             <div id="bedSolution"></div>
+            <mark>move your mouse over a tile to see the name of the plant</mark><br /><br />
             <h5 id="infoText"></h5>
             <br /><br /><br />
 
@@ -351,31 +365,43 @@
 
             <h3>Step 9: Modify</h3>
             <br />
-            Checkout the <a href="https://github.com/peter1123581321/geneticgarden">sourcecode on GitHub</a>.
-            <br /><br />
+            <a href="https://github.com/peter1123581321/geneticgarden"><img src="pics/GitHub-Mark-120px-plus.png" alt="github logo" style="width:50px; margin-right:20px;" /></a>Checkout the <a href="https://github.com/peter1123581321/geneticgarden">sourcecode on GitHub</a>.
+            <br clear="all" /><br />
             test it, bug fix it, hack it, fork it!<br />
             but don't blame me for bad js code :P
 
             <br /><br /><br />
 
+            This website uses <a href="https://konvajs.org/">Konva.js</a>, <a href="https://www.chartjs.org/">Chart.js</a> and <a href="https://getbootstrap.com">Bootstrap</a>
+
+            <br /><br />
+
+            <a href="https://konvajs.org/"><img src="pics/konva-logo.png" alt="konva logo" style="width:70px; margin-right:20px;" /></a>
+            <a href="https://www.chartjs.org/"><img src="pics/chartjs-logo.png" alt="chartjs logo" style="width:70px; margin-right:20px;" /></a>
+            <a href="https://getbootstrap.com"><img src="pics/bootstrap-logo.png" alt="bootstrap" style="width:70px; margin-right:20px;" /></a>
+
+            <br /><br /><br />
 
             <h3>Misc</h3>
             <br />
+            <img src="pics/misc-seedlings.jpg" align="right" width="500px" style="padding-left:50px; padding-bottom:50px;" alt="picture of seedlings" />
             I signed the <mark>Karlskrona Manifesto</mark> on <mark>Sustainability Design</mark>.
-            <br />You should too, it's important. <a href="https://www.sustainabilitydesign.org/signatories/">https://www.sustainabilitydesign.org/signatories/</a>.
+            <br />You should too, it's important.<br />
+            <a href="https://www.sustainabilitydesign.org/signatories/">https://www.sustainabilitydesign.org/signatories/</a>
             <br /><br />
             This website was created and hosted by Peter Garscha.<br />
-            I'm currently doing my PhD in the topic of sustainability, requirements engineering and agile software development.<br />
+            I'm currently doing my PhD on sustainability, requirements engineering and agile software development.<br />
             The goal is to develop a <mark>sustainability aware Scrum framework</mark>.<br />
-            If you are interested in running a case study in Austria, Germany or Switzerland,<br />
-            with me and your Scrum team, just write me an e-mail! :-) 
+            If you are interested in running a case study in Austria, Germany or Switzerland, with me and your Scrum team,
+            <br />just write me an e-mail! :-) 
             <br /><br />
             Contact me: <a href="mailto:contact[at]genetic[dot]garden">contact [at] genetic [dot] garden</a>
             <br /><br /><br />
             The development of this websites produced CO2. The same is true, when you run the algorithm in your browser.<br />
             According to <a href="https://www.websitecarbon.com/website/genetic-garden/">www.websitecarbon.com</a>, this website produces 252.7kg of CO2 equivalent a year.<br />
-            I have no idea, if this is true, but I donated &euro; 81 at <a href="https://www.atmosfair.de">www.atmosfair.de</a> for 3,500kg,<br />
-            which equals a flight from Vienna to New York and back (the climate-friendly annual budget of a person is about 1,500kg).
+            I have no idea, if this is true, or if it's less or more, but I donated &euro; 81 at <a href="https://www.atmosfair.de">www.atmosfair.de</a> for 3,500kg,<br />
+            which equals a flight from Vienna to New York and back.<br />
+            By the way, the climate-friendly annual budget of a person is about 1,500kg.
 
 
             <br /><br /><br />
@@ -441,7 +467,10 @@
             Pumpkin:
             Photo by <a href="https://unsplash.com/@kerstinwrba?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Kerstin Wrba</a>,
             Onion:
-            Photo by <a href="https://unsplash.com/@lmablankers?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Lars Blankers</a>
+            Photo by <a href="https://unsplash.com/@lmablankers?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Lars Blankers</a>,
+            Misc:
+            Photo by <a href="https://unsplash.com/@markusspiske?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Markus Spiske</a>
+  
 
             <br /><br /><br />
         </div>
@@ -581,6 +610,7 @@
             drawBedLayer();
             drawBedSolutionLayer();
 
+            randomizePlants();
 
             // functions
 
@@ -595,7 +625,7 @@
 
             function randomizePlants() {
                 clearAllPlants();
-                while (gCountPlants<gCountGreens) {
+                while (gCountPlants<Math.floor(gCountGreens*0.75)) {
                     var i = Math.floor(Math.random()*gPlants.length);
                     gPlants[i].count++;
                     document.getElementById("plant"+i).innerText = gPlants[i].count;
