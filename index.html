@@ -49,15 +49,9 @@
                 margin-right:2px;
             }
 
-            #myChartDiv {
-                /* border:1px #f00 solid; */
+            #myChart {
                 width: 800px;
                 height:400px;
-            }
-
-            #myChart {
-                /* border:1px #f00 solid; */
-                /* width="300" height="200" */
             }
 
         </style>
@@ -171,9 +165,7 @@
 
             <h3>Step 6: Analyse</h3>
             <br /><br />
-            <div id="myChartDiv">
-                <canvas id="myChart"></canvas>
-            </div>
+            <canvas id="myChart"></canvas>
             <br /><br />
 
 
@@ -390,7 +382,7 @@
             <a href="https://www.sustainabilitydesign.org/signatories/">https://www.sustainabilitydesign.org/signatories/</a>
             <br /><br />
             This website was created and hosted by Peter Garscha.<br />
-            I'm currently doing my PhD on sustainability, requirements engineering and agile software development.<br />
+            I'm currently doing my doctoral study on sustainability, requirements engineering and agile software development.<br />
             The goal is to develop a <mark>sustainability aware Scrum framework</mark>.<br />
             If you are interested in running a case study in Austria, Germany or Switzerland, with me and your Scrum team,
             <br />just write me an e-mail! :-) 
@@ -576,6 +568,7 @@
                     }]
                 },
                 options: {
+                    responsive: false,
                     animation: false,
                     scales: {
                         y: {
