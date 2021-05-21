@@ -143,6 +143,19 @@
                     <td><span id="iterations">500</span></td>
                     <td><input type="range" class="form-range" min="10" max="1000" value="500" step="5" id="rangeIterations" oninput="changeIterations(this.value)" onchange="changeIterations(this.value)"></td>
                   </tr>
+
+                  <tr>
+                    <th scope="row">Mutations per Iteration</th>
+                    <td><span id="mutations">10</span></td>
+                    <td><input type="range" class="form-range" min="0" max="100" value="10" step="1" id="rangeMutations" oninput="changeMutations(this.value)" onchange="changeMutations(this.value)"></td>
+                  </tr>
+
+                  <tr>
+                    <th scope="row">Crossovers per Iteration</th>
+                    <td><span id="crossovers">10</span></td>
+                    <td><input type="range" class="form-range" min="0" max="100" value="10" step="1" id="rangeCrossovers" oninput="changeCrossovers(this.value)" onchange="changeCrossovers(this.value)"></td>
+                  </tr>
+
                 </tbody>
             </table>
             
@@ -156,7 +169,7 @@
             <button type="button" id="startButton" class="btn btn-primary" onclick="startGenetic()">Start</button>
             <button type="button" class="btn btn-primary" onclick="reset()">Reset</button>
             <br /><br />
-            Score: <span id="score">0</span>, Iteration: <span id="iteration">0</span>
+            Score: <span id="score">0</span>, Iteration: <span id="iteration">0</span>, Population Size: <span id="population">0</span>
             <br /><br />
             <div id="bedSolution"></div>
             <mark>move your mouse over a tile to see the name of the plant</mark><br /><br />
@@ -487,6 +500,8 @@
             var gPopulationSize = 20;
             var gPopulation = [];
             var gIterations = 500;
+            var gMutations = 10;
+            var gCrossovers = 10;
             var gIterationIndex = 0;
             var gCountSoil = countSoil();
             var gPlants = [];
@@ -643,6 +658,16 @@
                 gIterations = iterations;
             }
 
+            function changeMutations(mutations) {
+                document.getElementById("mutations").innerText=mutations;
+                gMutations= mutations;
+            }
+
+            function changeCrossovers(crossovers) {
+                document.getElementById("crossovers").innerText=crossovers;
+                gCrossovers = crossovers;
+            }
+
             function sleep(ms) {
                 return new Promise(resolve => setTimeout(resolve, ms));
             }
@@ -662,6 +687,7 @@
                     }
                     disableButtons();
                     gPopulation = generatePopulation();
+                    document.getElementById("population").innerText=gPopulation.length;
                     gPopulation = gPopulation.sort(sortPopulation);
                     drawSolution(gPopulation[0]);
                     resetChart();
@@ -675,7 +701,7 @@
 
                     // crossover
                     if (gPopulationSize>1) { // only if two parents available
-                        for (var k=0;k<10;k++) {
+                        for (var k=0;k<gCrossovers;k++) {
                             var aIndex = Math.floor(Math.random()*gPopulationSize);
                             var bIndex = aIndex;
 
@@ -692,23 +718,29 @@
                             var crossoverGen = crossover(individualA.gen,individualB.gen);
                             var crossoverScore = evaluateGen(crossoverGen);
                             gPopulation.push({gen: crossoverGen, score: crossoverScore});
+                            document.getElementById("population").innerText=gPopulation.length;
                         }
                     }
+                    await sleep(1);
 
                     // mutate X gens
-                    for (var k=0;k<10;k++) {
+                    for (var k=0;k<gMutations;k++) {
                         var mutatedGen = mutateGen(copy(gPopulation[Math.floor(Math.random()*gPopulationSize)].gen));
                         var mutatedScore = evaluateGen(mutatedGen);
                         gPopulation.push({gen: mutatedGen, score: mutatedScore});
+                        document.getElementById("population").innerText=gPopulation.length;
                     }
+                    await sleep(1);
 
                     // sort & draw
                     gPopulation=gPopulation.sort(sortPopulation);
                     gPopulation.splice(gPopulationSize);
+                    document.getElementById("population").innerText=gPopulation.length;
+                    await sleep(1);
                     document.getElementById("score").innerText=gPopulation[0].score;
                     drawSolution(gPopulation[0].gen);
                     addDataToChart(gIterationIndex, gPopulation[0].score);
-                    await sleep(50);                    
+                    await sleep(10);                    
                 }
 
                 if (gIterationIndex<gIterations-1 && !gReset) {
@@ -722,6 +754,7 @@
                         gReset = false;
                         document.getElementById("score").innerText=0;
                         document.getElementById("iteration").innerText=0;  
+                        document.getElementById("population").innerText=0;  
                         drawBedSolutionLayer();
                     }
                 }
@@ -737,6 +770,7 @@
                     enableButtons();
                     document.getElementById("score").innerText=0;
                     document.getElementById("iteration").innerText=0;  
+                    document.getElementById("population").innerText=0;  
                     drawBedSolutionLayer();
                     resetChart();
                 }
@@ -747,6 +781,8 @@
                 document.getElementById("randomizePlantsButton").disabled = true;
                 document.getElementById("rangePopulationSize").disabled = true;
                 document.getElementById("rangeIterations").disabled = true;
+                document.getElementById("rangeMutations").disabled = true;
+                document.getElementById("rangeCrossovers").disabled = true;
                 for (var i=0;i<gPlants.length;i++) {
                     document.getElementById("btnPlantPlus"+i).disabled = true;
                     document.getElementById("btnPlantMinus"+i).disabled = true;
@@ -758,6 +794,8 @@
                 document.getElementById("randomizePlantsButton").disabled = false;
                 document.getElementById("rangePopulationSize").disabled = false;
                 document.getElementById("rangeIterations").disabled = false;
+                document.getElementById("rangeMutations").disabled = false;
+                document.getElementById("rangeCrossovers").disabled = false;
                 for (var i=0;i<gPlants.length;i++) {
                     document.getElementById("btnPlantPlus"+i).disabled = false;
                     document.getElementById("btnPlantMinus"+i).disabled = false;
