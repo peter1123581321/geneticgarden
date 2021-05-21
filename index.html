@@ -79,22 +79,22 @@
             <h3>Step 1: Understand the Problem</h3>
             <br />
             <img src="pics/understand-the-problem.jpg" align="right" width="500px" style="padding-left:50px; padding-bottom:50px;" alt="picture of a person who gardens" />
-            Companion planting in gardening and agriculture is the planting of different crops in proximity for any of a number of different reasons, including pest control, pollination, providing habitat for beneficial insects, maximizing use of space, and to otherwise increase crop productivity (<a href="https://en.wikipedia.org/wiki/Companion_planting">read more about it on Wikipedia</a>).
+            Companion planting in gardening and agriculture is the planting of different crops for a number of different reasons (<a href="https://en.wikipedia.org/wiki/Companion_planting">read more about it on Wikipedia</a>).
             <br /><br />
             Some crops fit well together, as example onion and carrots or turnips and cucumbers.
             Others don't fit that well, as example peas and garlic or beans and fennel.
             See <a href="#step7-companion-planting">Step 7: About Companion Planting</a> for more information.
             <br /><br />
-            If you will follow the idea of companion planting in your own garding, you have to think about a plan how you will arrange the plants in your beds.
+            If you like to follow the idea of companion planting in your own garding, you have to think about a plan how you will arrange the plants in your beds.
             The bigger your beds are or the more crops you want to plant, the more difficult this task gets.
             <br /><br />
             The simplest method is to use a trial-and-arror approach and to find a solution that's sufficient for your needs.
             <br />
-            Another quite interesting method is to use an genetic algorithm that is presented on this website!
+            Another quite interesting method is to use a genetic algorithm that is presented on this website!
             <br /><br />
             A genetic algorithm creates a set of individuals that represent possible solutions of the problem. Just like nature, the algorithm iteratively applies mutation- and crossover-functions to create descendants. Additionally, a fitness-function ensures that the algorithm only selects the fittest individuals for further iterations. This process is repeated a number of times or just till a satisfying solution is found.
             More details can be found in <a href="#step8-algorithm">Step 8: Learn how the Algorithm works</a>.
-            <br /><br />
+            <br /><br /><br />
 
 
             <h3 id="step2-design-your-beds">Step 2: Design your beds</h3>
@@ -323,9 +323,9 @@
             before the mutation: <code>[..., -1, -1, 7, -1, ...]</code><br />
             after the mutation: <code>[..., -7, -1, -1, -1, ...]</code>
             <br /><br />
-            As it can be seen, the <i>7</i> changed its place. The corresponding plant is a <i>Nasturtium</i> and it has been put to tile that had soil on it.
+            As it can be seen, the <i>7</i> changed its place. The corresponding plant is a <i>Nasturtium</i> and it has been put on a tile that has soil on it.
             <br />
-            The only thing one have to care about is, that the grass-tiles will not be touched.
+            The only thing one have to care about is, that the grass-tiles are not touched.
             <br />
             This is necessary to ensure that the designed beds remain the same.
             <br /><br />
@@ -334,8 +334,8 @@
             The crossover-function is a bit more difficult, as it randomly takes two different individuals and creates one descendant out of them.
             <br /><br />
             To create a descendant it walks through the arrays of the parents and randomly selects the value from one of the parents,
-            <br />as far as that doesn'tn violate one of the constraints for a legal individual.
-            <br />If there are some plants lefts, they can be arranged randomly on the free soil-tiles.
+            <br />as far as that doesn't violate one of the constraints for a legal individual.
+            <br />If there are some plants left, they can be arranged randomly on the free soil-tiles.
             <br /><br />
             Individual A: <code>[-2, 3, 7, 4, -2]</code><br />
             Individual B: <code>[-2, 4, 3, 7, -2]</code>
@@ -357,13 +357,13 @@
             <br /><br />
             <u>Selection</u>
             <br /><br />
-            After the mutation- and crossover-function have been applied, the populion contains more individuals than before.<br />
+            After the mutation- and crossover-function have been applied, the population contains more individuals than before.<br />
             Therefore, the selection-function selects the best, respectively the fittest individuals of the population for the next iteration.
             <br /><br />
-            The rating of an individual is done by comparing each tile with its neighbours<br />in consideration of their compatibility (see <a href="step7-companion-planting">Step 7: About Companion Planting</a>).<br />
+            The rating of an individual is done by comparing each tile with its neighbours<br />in consideration of their compatibility (see <a href="#step7-companion-planting">Step 7: About Companion Planting</a>).<br />
             If two plants next to each other fit well together, the value <i>1</i> is used; if they don't fit together, a value <i>-1</i> is used.<br />
-            Addiontially, if to plants are of the same crop, the value <i>-1</i> is used too, to prevent accumulation of the same plants in a neighborhood.
-            The sum indiciates a value of each individuals and can be used to sort the individuals of a population.<br />
+            Addiontially, if two plants are of the same crop, the value <i>-1</i> is used too, to prevent accumulation of the same plants in a neighborhood.
+            The sum indiciates a value of each individual and can be used to sort the individuals of a population.<br />
             Consequently, the size of the population can be cut to its initial size.
 
             <br /><br /><br />
@@ -402,7 +402,7 @@
             <br /><br />
             Contact me: <a href="mailto:contact[at]genetic[dot]garden">contact [at] genetic [dot] garden</a>
             <br /><br /><br />
-            The development of this websites produced CO2. The same is true, when you run the algorithm in your browser.<br />
+            The development of this website produced CO2. The same is true, when you run the algorithm in your browser.<br />
             According to <a href="https://www.websitecarbon.com/website/genetic-garden/">www.websitecarbon.com</a>, this website produces 252.7kg of CO2 equivalent a year.<br />
             I have no idea, if this is true, or if it's less or more, but I donated &euro; 81 at <a href="https://www.atmosfair.de">www.atmosfair.de</a> for 3,500kg,<br />
             which equals a flight from Vienna to New York and back.<br />
@@ -413,7 +413,7 @@
 
             <h3>Credits</h3>
             <br />
-            All photos can be found on <a href="https://unsplash.com/s/photos/beans?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>.
+            All photos can be found on <a href="https://unsplash.com/">Unsplash</a>.
             <br /><br />
             Favicon:
             Photo by <a href="https://unsplash.com/@rohitranwa?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Rohit Ranwa</a>,
