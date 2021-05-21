@@ -103,7 +103,7 @@
             they can be of any form and don't have to be connected.
             <br /><br />
             Number of Tiles: 
-            <div><h5 id="countGreens"></h5></div>
+            <div><h5 id="countSoil"></h5></div>
             <br />
             <div id="bed"></div>
 
@@ -488,7 +488,7 @@
             var gPopulation = [];
             var gIterations = 500;
             var gIterationIndex = 0;
-            var gCountGreens = countBrowns();
+            var gCountSoil = countSoil();
             var gPlants = [];
             gPlants[0]={count:0, name:'Beans',img:"beans.jpg",color:"#3d5940"};
             gPlants[1]={count:0, name:'Dill',img:"dill.jpg",color:"#5f8340"};
@@ -518,7 +518,6 @@
             gPlants[25]={count:0, name:'Pumpkin',img:"pumpkin.jpg",color:"#9b7449"};
             gPlants[26]={count:0, name:'Onion',img:"onion.jpg",color:"#9c7040"};
             
-
             var gCountPlants = 0;
             var gPlantMatrix = [];
 
@@ -553,7 +552,7 @@
             var gChartLabels = [];
             var gChartData = [];
 
-            // chart
+            // init chart
             var ctx = document.getElementById('myChart');
             var myChart = new Chart(ctx, {
                 type: 'line',
@@ -578,6 +577,20 @@
                 }
             });
 
+            // init rest
+            document.getElementById("countSoil").innerText = gCountSoil;
+            document.getElementById("countPlants").innerText = gCountPlants;
+
+            // stages, layers
+            var bedLayer = new Konva.Layer();
+            var bedSolutionLayer = new Konva.Layer();
+
+            drawBedLayer();
+            drawBedSolutionLayer();
+            randomizePlants();
+
+            // functions
+
             function addDataToChart(label, data) {
                 gChartLabels.push(label);
                 gChartData.push(data);
@@ -590,23 +603,6 @@
                 myChart.update();
             }
 
-
-            // init
-            document.getElementById("countGreens").innerText = gCountGreens; // eigentlich countBrowns
-            document.getElementById("countPlants").innerText = gCountPlants;
-
-            // stages, layers
-
-            var bedLayer = new Konva.Layer();
-            var bedSolutionLayer = new Konva.Layer();
-
-            drawBedLayer();
-            drawBedSolutionLayer();
-
-            randomizePlants();
-
-            // functions
-
             function clearAllPlants() {
                 gCountPlants = 0;
                 for (var i=0;i<gPlants.length;i++) {
@@ -618,7 +614,7 @@
 
             function randomizePlants() {
                 clearAllPlants();
-                while (gCountPlants<Math.floor(gCountGreens*0.75)) {
+                while (gCountPlants<Math.floor(gCountSoil*0.75)) {
                     var i = Math.floor(Math.random()*gPlants.length);
                     gPlants[i].count++;
                     document.getElementById("plant"+i).innerText = gPlants[i].count;
@@ -627,7 +623,7 @@
                 document.getElementById("countPlants").innerText = gCountPlants;
             }
 
-            function countBrowns() {
+            function countSoil() {
                 var count=0;
                 for (var i=0;i<gTiles.length;i++) {
                     if (gTiles[i].status==SOIL) {
@@ -660,7 +656,7 @@
                 }
 
                 if (gIterationIndex == 0) { // init (start, not continue)
-                    if (gCountPlants>gCountGreens) {
+                    if (gCountPlants>gCountSoil) {
                         alert("can't start the algorithm. you have selected too much plants.")
                         return;
                     }
@@ -669,7 +665,6 @@
                     gPopulation = gPopulation.sort(sortPopulation);
                     drawSolution(gPopulation[0]);
                     resetChart();
-                    // console.log(gIterationIndex);
                 }
 
                 document.getElementById("startButton").innerText="Pause";
@@ -679,13 +674,16 @@
                     document.getElementById("iteration").innerText=(gIterationIndex+1)+"/"+gIterations;  
 
                     // crossover
-                    if (gPopulationSize>1) { // nur crossovern wenn mehr als zwei eltern existieren
+                    if (gPopulationSize>1) { // only if two parents available
                         for (var k=0;k<10;k++) {
                             var aIndex = Math.floor(Math.random()*gPopulationSize);
                             var bIndex = aIndex;
 
-                            while (bIndex==aIndex) { // unterschiedliche Eltern auswählen
+                            for (var p=0;p<5;p++) { // try to take two different individuals
                                 bIndex = Math.floor(Math.random()*gPopulationSize);
+                                if (bIndex!=aIndex) {
+                                    break;
+                                }
                             }
 
                             var individualA = gPopulation[aIndex];
@@ -775,40 +773,32 @@
 
                 var child = [];
 
-                // für jeden index wird eines der beiden elter ausgewählt
-                // falls erde, übernehmen
-                // falls pflanze und noch genügend da, übernehmen
-                // ansonsten mit anderem elter weitermachen
-                // fals erde, übernehmen
-                // falls pflanze und noch genügend da, übernehmen
-                // anschließend restliche pflanzen per zufall auf freie erde verteilen
                 for (var i=0;i<gTilesCount;i++) {
-                    if (individualA[i]==-2) {
-                        child.push(-2);
+                    if (individualA[i]==GREEN) { // if green grass, take it
+                        child.push(GREEN);
                     } else {
-
-                        var parentIndex = Math.floor(Math.random()*2); // bevorzugtes elter festlegen
+                        var parentIndex = Math.floor(Math.random()*2); // choose primary parent randomly
 
                         var primaryPlant = parentIndex==0 ? individualA[i] : individualB[i];
                         var secondaryPlant = parentIndex==0 ? individualB[i] : individualA[i];
 
-                        if (primaryPlant==-1) { // bevorzugtes Elter ist erde --> übernehmen
-                            child[i]=-1;
-                        } else if (plants[primaryPlant]>0) { // bevorzugtes Elter pflanze noch verfügbar --> übernehmen
+                        if (primaryPlant==SOIL) { // primary is soil --> take it
+                            child[i]=SOIL;
+                        } else if (plants[primaryPlant]>0) { // primary plant is available --> take it
                             child[i]=primaryPlant;
                             plants[primaryPlant]--;
-                        } else if (secondaryPlant==-1) { // nachrangiges Elter ist erde --> übernehmen
-                            child[i]=-1;
-                        } else if (plants[secondaryPlant]>0) { // nachrangiges Elter pflanze noch verfügbar --> übernehmen
+                        } else if (secondaryPlant==SOIL) { // secondary is soil --> take it
+                            child[i]=SOIL;
+                        } else if (plants[secondaryPlant]>0) { // secondary plant is available --> take it
                             child[i]=secondaryPlant;
                             plants[secondaryPlant]--;
-                        } else { // wenn alles nichts hilft, dann erde
-                            child.push(-1);
+                        } else { // or just put soil on it
+                            child.push(SOIL);
                         }
                     }
                 }
 
-                // restliche pflanzen per zufall verteilen
+                // arrange remaining plants randomly
                 for (var i=0;i<plants.length;i++) {
                     while(plants[i]>0) {
                         var k = getRandomFreeTile(child);
@@ -820,27 +810,11 @@
                 return child;
             }
 
-            function printPopulation(population) {
-                for (var i=0;i<population.length;i++) {
-
-                    var gen = population[i].gen;
-
-                    var plants=[];
-                    for (var k=0;k<gen.length;k++) {
-                        if (gen[k]>=-1) {
-                            plants.push(gen[k]);
-                        }
-                    }
-
-                    // console.log(JSON.stringify(plants)+" --> "+population[i].score);
-                }
-            }
-
             function mutateGen(gen) {
 
                 var plants=[];
                 for (var i=0;i<gen.length;i++) {
-                    if (gen[i]>=-1) {
+                    if (gen[i]>=SOIL) {
                         plants.push(i);
                     }
                 }
@@ -939,8 +913,6 @@
                     // search for a plant color
                     for (var i=0;i<p.length;i++) {
                         if (p[i].count>0) {
-                            // gen[getRandomFreeTile(gen)]=p[i].color;
-                            // console.log(i);
                             gen[getRandomFreeTile(gen)]=i;
                             p[i].count--;
                             c--;
@@ -954,29 +926,23 @@
                 if (!aObject) {
                     return aObject;
                 }
-
                 let v;
                 let bObject = Array.isArray(aObject) ? [] : {};
                 for (const k in aObject) {
                     v = aObject[k];
                     bObject[k] = (typeof v === "object") ? copy(v) : v;
                 }
-
                 return bObject;
             }
 
             function getRandomFreeTile(gen) {
                 var tiles=[];
                 for (var i=0;i<gen.length;i++) {
-                    if (gen[i]==-1) {
+                    if (gen[i]==SOIL) {
                         tiles.push(i);
                     }
                 }
                 return tiles[Math.floor(Math.random() * tiles.length)];
-            }
-
-            function getPlantColor(p) {
-
             }
 
             function drawBedLayer() {
@@ -1089,7 +1055,7 @@
             }
 
             function addPlant(plantIndex) {
-                if (gCountPlants<gCountGreens) {
+                if (gCountPlants<gCountSoil) {
                     gCountPlants++
                     gPlants[plantIndex].count++;
                     document.getElementById("countPlants").textContent=gCountPlants;
@@ -1108,14 +1074,14 @@
 
             function changeTile(box) {
                 var newColor=GREENCOLOR;
-                gCountGreens--;
+                gCountSoil--;
 
                 if (box.attrs.fill==GREENCOLOR) {
                     newColor=SOILCOLOR;
-                    gCountGreens+=2;
+                    gCountSoil+=2;
                 }
 
-                document.getElementById("countGreens").textContent=gCountGreens;
+                document.getElementById("countSoil").textContent=gCountSoil;
 
                 box.fill(newColor);
                 box.draw();
@@ -1133,14 +1099,6 @@
                 }
                 return null;
             }
-
-            /*
-            function highlightNeighbours(rect) {
-                var id = rect.attrs.id;
-                id = id.slice(4);
-                console.log(JSON.stringify(id) + ' --> '+getNeighboursByRectId(Number(id)));
-            }
-            */
 
             function getNeighboursByRectId(id) {
                 var neighbours = [];
@@ -1164,7 +1122,6 @@
             }
 
             // events
-
             bedLayer.on('mousedown', function (evt) {
                 gMouseDown = true;
                 if (evt.target.className=='Rect') {
