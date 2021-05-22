@@ -99,6 +99,7 @@
 
             <h3 id="step2-design-your-beds">Step 2: Design your beds</h3>
             click on single tiles or click and move to design your beds.<br />
+            (mobile users: please just tap on the tiles)<br />
             select as many tiles as you want for your beds.<br />
             they can be of any form and don't have to be connected.
             <br /><br />
@@ -172,7 +173,7 @@
             Score: <span id="score">0</span>, Iteration: <span id="iteration">0</span>, Population Size: <span id="population">0</span>
             <br /><br />
             <div id="bedSolution"></div>
-            <mark>move your mouse over a tile to see the name of the plant</mark><br /><br />
+            <mark>move your mouse over a tile to see the name of the plant (mobile users: please tap on a tile)</mark><br /><br />
             <h5 id="infoText"></h5>
             <br /><br /><br />
 
@@ -1159,9 +1160,28 @@
                 return neighbours;
             }
 
+            function showPlantInfo(evt) {
+                if (evt.target.className=='Rect') {
+                    var tileId = evt.target.attrs.id.slice(12);
+                    if (gPopulation.length>0) {
+                        var plantId = gPopulation[0].gen[tileId];
+                        if (plantId>=0) {
+                            var text = gPlants[plantId].name;
+                            document.getElementById("infoText").innerText = text;
+                        }
+                    }
+                }
+            }
+
             // events
             bedLayer.on('mousedown', function (evt) {
                 gMouseDown = true;
+                if (evt.target.className=='Rect') {
+                    changeTile(evt.target);
+                }
+            });
+
+            bedLayer.on('tap', function (evt) {
                 if (evt.target.className=='Rect') {
                     changeTile(evt.target);
                 }
@@ -1180,16 +1200,11 @@
             });
 
             bedSolutionLayer.on('mouseover', function (evt) {
-                if (evt.target.className=='Rect') {
-                    var tileId = evt.target.attrs.id.slice(12);
-                    if (gPopulation.length>0) {
-                        var plantId = gPopulation[0].gen[tileId];
-                        if (plantId>=0) {
-                            var text = gPlants[plantId].name;
-                            document.getElementById("infoText").innerText = text;
-                        }
-                    }
-                }
+                showPlantInfo(evt);
+            });
+
+            bedSolutionLayer.on('tap', function (evt) {
+                showPlantInfo(evt);
             });
 
             bedSolutionLayer.on('mouseout', function (evt) {
